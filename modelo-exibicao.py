@@ -2,10 +2,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '',
-    user='',
-    password='',
-    database=''
+    host = '127.0.0.1',
+    user='root',
+    password='EnzoPazian140207',
+    database='teste_py'
 )
 cursor = connection.cursor()
 
@@ -19,23 +19,24 @@ comando = 'SELECT * FROM pi_entradas_sustentabilidade'
 cursor.execute(comando)
 resultado = []
 resultado = cursor.fetchall() # lê o banco de dados -> apenas para selects
-print("Exibição dos dados das tabelas: ")
-print('-'*121)
-print('| ID | Data de registro | Consumo de água | Consumo de energia | % de lixo reciclável gerado | Transportes utilizados   |')
-print('-'*121)
+print('\nExibição dos dados das tabelas:\n')
+print('-'*130)
+print('| ID | Data de registro | Consumo de água | Consumo de energia | % de lixo reciclável gerado | Transportes utilizados\t\t |')
+print('-'*130)
 for i in range(len(resultado)):
     print(f'  {resultado[i][0]}', end='\t')
     print(resultado[i][1], end='\t   ')
     print(f'{resultado[i][2]} L', end='\t\t')
     print(f'{resultado[i][3]} KwH', end='\t\t\t')
     print(f'{resultado[i][4]}%', end='\t\t\t')
-    print(resultado[i][5:10])
+    print(resultado[i][5::])
+print('-'*130)
 
 # Processamento dos dados armazenados
-print('\n')
-print('-'*121)
+print('\nProcessamento dos dados armazenados:\n')
+print('-'*130)
 print('Média dos dados coletados')
-print('-'*121)
+print('-'*130)
 
 # Água
 comando = 'SELECT avg(consumo_agua) FROM pi_entradas_sustentabilidade'
@@ -78,7 +79,7 @@ elif ((not 1 in class_transporte) and (not 3 in class_transporte)) or ((1 in cla
     print('Moderada sustentabilidade')
 elif (not 1 in class_transporte) and (not 2 in class_transporte):
     print('Baixa sustentabilidade')
-
+print('-'*130)
 
 cursor.close()
 connection.close()
