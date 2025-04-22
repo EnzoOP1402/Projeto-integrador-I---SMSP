@@ -2,10 +2,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '127.0.0.1',
-    user='root',
-    password='EnzoPazian140207',
-    database='teste_py'
+    host = '',
+    user='',
+    password='',
+    database=''
 )
 cursor = connection.cursor()
 
@@ -19,24 +19,25 @@ comando = 'SELECT * FROM pi_entradas_sustentabilidade'
 cursor.execute(comando)
 resultado = []
 resultado = cursor.fetchall() # lê o banco de dados -> apenas para selects
-print('\nExibição dos dados das tabelas:\n')
-print('-'*130)
-print('| ID | Data de registro | Consumo de água | Consumo de energia | % de lixo reciclável gerado | Transportes utilizados\t\t |')
-print('-'*130)
+print('\nExibição dos dados de inserção:\n')
+print('-'*162)
+print('| ID | Data de registro | Consumo de água | Consumo de energia | Quantidade de lixo gerado | % de lixo reciclável gerado | Transportes utilizados\t\t |')
+print('-'*162)
 for i in range(len(resultado)):
     print(f'  {resultado[i][0]}', end='\t')
     print(resultado[i][1], end='\t   ')
     print(f'{resultado[i][2]} L', end='\t\t')
     print(f'{resultado[i][3]} KwH', end='\t\t\t')
-    print(f'{resultado[i][4]}%', end='\t\t\t')
-    print(resultado[i][5::])
-print('-'*130)
+    print(f'{resultado[i][4]} Kg', end='\t\t\t')
+    print(f'{resultado[i][5]}%', end='\t\t\t\t')
+    print(resultado[i][6:12])
+print('-'*162)
 
 # Processamento dos dados armazenados
 print('\nProcessamento dos dados armazenados:\n')
-print('-'*130)
+print('-'*162)
 print('Média dos dados coletados')
-print('-'*130)
+print('-'*162)
 
 # Água
 comando = 'SELECT avg(consumo_agua) FROM pi_entradas_sustentabilidade'
@@ -62,7 +63,7 @@ cursor.execute(comando)
 dados_transporte = class_transporte = []
 dados_transporte = cursor.fetchall()
 # Conversão das letras de cada linha em classificação (1 - alta; 2 - moderada; 3 - baixa)
-for i in range(len(dados_transporte)):
+for i in range(2, len(dados_transporte)-1):
     if dados_transporte[i][0] == 'S' or dados_transporte[i][1] == 'S' or dados_transporte[i][2] == 'S' or dados_transporte[i][4] == 'S':
         if dados_transporte[i][3] == 'S' or dados_transporte[i][5] == 'S':
             class_transporte.append(2)
@@ -75,11 +76,11 @@ print('Média da classificação de transportes: ', end='')
 # Análise dos dados convertidos
 if (not 3 in class_transporte) and (not 2 in class_transporte):
     print('Alta sustentabilidade')
-elif ((not 1 in class_transporte) and (not 3 in class_transporte)) or ((1 in class_transporte) and ((2 in class_transporte) or (3 in class_transporte))):
-    print('Moderada sustentabilidade')
 elif (not 1 in class_transporte) and (not 2 in class_transporte):
     print('Baixa sustentabilidade')
-print('-'*130)
+else:
+    print('Moderada sustentabilidade')
+print('-'*162)
 
 cursor.close()
 connection.close()
