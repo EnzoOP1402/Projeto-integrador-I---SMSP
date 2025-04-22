@@ -33,6 +33,23 @@ for i in range(len(resultado)):
     print(resultado[i][6:12])
 print('-'*162)
 
+# Exibição da classificação dos registros
+comando = 'SELECT * FROM pi_classificacoes_sustentabilidade'
+cursor.execute(comando)
+resultado_class = []
+resultado_class = cursor.fetchall()
+print('\nExibição da classificação dos dados armazenados:\n')
+print('-'*162)
+print('| ID | Consumo de água\t\t| Consumo de energia\t\t| % de lixo reciclável gerado\t| Transportes utilizados\t|')
+print('-'*162)
+for i in range(len(resultado_class)):
+    print(f'  {resultado_class[i][0]}', end='\t')
+    print(resultado_class[i][1], end='\t   ')
+    print(resultado_class[i][2], end='\t   ')
+    print(resultado_class[i][3], end='\t   ')
+    print(resultado_class[i][4])
+print('-'*162)
+
 # Processamento dos dados armazenados
 print('\nProcessamento dos dados armazenados:\n')
 print('-'*162)
@@ -45,17 +62,44 @@ cursor.execute(comando)
 media_agua = cursor.fetchone()
 print(f'Média do consumo de água: {media_agua[0]:.2f} L')
 
+if (media_agua[0] >= 150):
+    if (media_agua[0] > 200):
+        print("Classificação do consumo de água: Baixa sustentabilidade")
+    else:
+        print("Classificação do consumo de água: Moderada sustentabilidade")
+else:
+    print("Classificação do consumo de água: Alta sustentabilidade")
+print('\n')
+
 # Energia
 comando = 'SELECT avg(consumo_energia) FROM pi_entradas_sustentabilidade'
 cursor.execute(comando)
 media_energia = cursor.fetchone()
+
 print(f'Média do consumo de energia: {media_energia[0]:.2f} kwH')
+if (media_energia[0] >= 5): 
+    if (media_energia[0] > 10):
+        print("Classificação do consumo de energia: Baixa sustentabilidade")
+    else: 
+        print("Classificação do consumo de energia: Moderada sustentabilidade")
+else:
+    print("Classificação do consumo de energia: Alta sustentabilidade")   
+print('\n')
 
 #Porcentagem
 comando = 'SELECT avg(pct_lixo) FROM pi_entradas_sustentabilidade'
 cursor.execute(comando)
 media_lixo = cursor.fetchone()
 print(f'Média da porcentagem de lixo reciclável gerado: {media_lixo[0]:.2f}%')
+
+if (media_lixo[0] <= 50):
+    if (media_lixo[0] < 20):
+        print("Classificação da geração de resíduos recicláveis: Baixa sustentabilidade")
+    else:
+        print("Classificação da geração de resíduos recicláveis: Moderada sustentabilidade")
+else:
+    print("Classificação da geração de resíduos recicláveis: Alta sustentabilidade")
+print('\n')
 
 # Tipos de transporte
 comando = 'SELECT transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eletrico, carona FROM pi_entradas_sustentabilidade'
