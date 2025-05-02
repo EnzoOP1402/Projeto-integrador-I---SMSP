@@ -1,6 +1,143 @@
 # Importando a blioteca para obter a data atual
 from datetime import date
 
+# Importando uma função que multiplica matrizes e outra que as transp da biblioteca mumpy -> usadas nas funções de cripto e descriptografia
+from numpy import matmul, transpose
+
+# Declarando a tabela do alfabeto
+T = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+# Declarando a função de criptografia
+def criptografia(nome):
+
+    # Declarando a matriz chave
+    chave = [[4, 3],[1,2]]
+
+    nome = nome.upper().replace(' ', '')
+
+    # Vetor de indexação
+    I = []
+
+    # Indexando
+    for i in range (len(nome)):
+        pos = T.index(nome[i])
+        if pos == '25':
+            I.append(0)
+        else:
+            I.append(pos+1)
+
+    # Declarando a matriz de texto comum
+    P = [[],[]]
+
+    # Indexan
+    for i in range(len(I)):
+        if i%2 == 0:
+            P[0].append(I[i])
+        else:
+            P[1].append(I[i])
+
+    # Obtendo a matriz de texto cifrado
+    C = matmul(chave, P)
+
+    # Convertendo os valores para os números existentes no conjunto alfabeto
+    for i in range(len(C)):
+        for j in range(len(C[0])):
+            C[i][j] %= 26
+            if C[i][j] == 0:
+                C[i][j] = 26
+
+    # Declarando o vetor que armazena as letras convertidas
+    TC = []
+
+    # Convertendo os números em letras
+    for i in range(len(C)):
+        for j in range(len(C[0])):
+            TC.append(T[C[i][j]-1])
+
+    # Declarando a matriz a ser usada na exibição
+    cripto = [[],[]]
+
+    # Ajustando as posições das letras na matriz
+    for i in range(int(len(TC)/2)):
+        cripto[0].append(TC[i])
+        cripto[1].append(TC[int(len(TC)/2)+i])
+
+    # Transpondo a matriz para facilitar a exibição
+    cripto = transpose(cripto)
+
+    # Obtendo o texto criptografado
+    texto_cripto = ''
+    for i in range(len(cripto)):
+        for j in range(len(cripto[0])):
+            texto_cripto += cripto[i][j]
+
+    # Retornando o texto criptografado
+    return texto_cripto
+
+# Declarando a função de descriptografia
+def descriptografia(nome_cifrado):
+    Matriz_inversa=[[42, -63],[-21,84]]
+
+    nome_cifrado = nome_cifrado.upper().replace(' ', '')
+
+    # Vetor de indexação de decifragem
+    V = []
+    # Indexando
+    for i in range (len(nome_cifrado)):
+        pos = T.index(nome_cifrado[i])
+        if pos == '25':
+            V.append(0)
+        else:
+            V.append(pos+1)
+
+    # Declarando a matriz de texto comum
+    P = [[],[]]
+
+    # Indexando
+    for i in range(len(V)):
+        if i%2 == 0:
+            P[0].append(V[i])
+        else:
+            P[1].append(V[i])
+
+    # Declarando a matriz de texto comum
+    M = matmul(Matriz_inversa,P)
+
+    # Convertendo os valores para os números existentes no conjunto alfabeto
+    for i in range(len(M)):
+        for j in range(len(M[0])):
+            M[i][j] %= 26
+            if M[i][j] == 0:
+                M[i][j] = 26
+
+    # Declarando o vetor que armazena as letras convertidas
+    TD = []
+
+    # Convertendo os números em letras
+    for i in range(len(M)):
+        for j in range(len(M[0])):
+            TD.append(T[M[i][j]-1])
+
+    # Declarando a matriz a ser usada na exibição
+    descripto = [[],[]]
+
+    # Ajustando as posições das letras na matriz
+    for i in range(int(len(TD)/2)):
+        descripto[0].append(TD[i])
+        descripto[1].append(TD[int(len(TD)/2)+i])
+
+    # Transpondo a matriz para facilitar a exibição
+    descripto = transpose(descripto)
+
+    # Obtendo o texto criptografado
+    texto_descripto = ''
+    for i in range(len(descripto)):
+        for j in range(len(descripto[0])):
+            texto_descripto += descripto[i][j]
+
+    # Retornando o texto descriptgrafado
+    return texto_descripto
+
 # Importando o conector sql
 import mysql.connector
 
@@ -24,8 +161,11 @@ while True:
     # Exibição do menu
     menu = int(input('\nSelecione a opção desejada:\n\n[1] - Inserir dados\n[2] - Alterar dados\n[3] - Apagar dados\n[4] - Listar registros\n[5] - Listar médias\n[6] - Sair\n\n>> '))
     match menu:
+
         # Inserção de dados
         case 1:
+            id = int(input('informe o número para identificação: '))
+
             data = date.today()
 
             consumo_agua = float(input("\nInforme o quanto de água você consumiu hoje (Aprox., em Litros): "))
@@ -81,23 +221,49 @@ while True:
                     break
                 else:
                     print("Resposta inválida\n")
+
+            # Inserção de dados mysql 
+            comando = f'INSERT INTO pi_entradas_sustentabilidade(id, data_registro, consumo_ag, consumo_energia, pct_lixo, transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eltrico, carona) VALUES ( {id}, {data}, {consumo_agua}, {consumo_energia}, {media_lixo}, {transporte_publico}, {bicicleta}, {caminhada}, {carro_combustivel}, {carro_eletrico}, {carona_compartilhada})'
                 
+            cursor.execute(comando)
+            connection.commit() # Editar banco de dados
+
         # Alteração de dados
         case 2:
+
+            data = str(input('informe a data da inserção (AAAA-MM-DD): ')) # Utilizando a data como referência
+            id =int(input('Insira um ID: '))
+            print('-consumo_ag\n -consumo_energia\n -pct_lixo\n -transporte_publico\n -bicicleta\n -caminhada\n -carro_comb_fossil\n -carro_eltrico\n -carona')
+
+            coluna = str(input('informe qual dos atributos acima deseja alterar: ')) # Coluna do dado a ser alterado
+            valor = str(input('informe o novo valor: ')) # Informando o novo valor
+
+            comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = {valor} WHERE data_registro = {data} and id = {id}'
+
+            cursor.execute(comando)
+            connection.commit() # Editar banco de dados
             print('Alterou')
 
         # Apagamento de dados
         case 3:
+
+            data = str(input('informe a data da inserção: ')) # Utilizando a data como referência
+            id = int(input('Insira um ID: '))
+            comando = f'DELETE FROM pi_entradas_sustentabilidade WHERE data_registro = {data} and id = {id}'
+            cursor.execute(comando)
+            connection.commit() # Editar banco de dados
             print('apagou')
 
         # Listagem de registros
         case 4:
+
             # Exibição dos dados armazenados
             comando = 'SELECT * FROM pi_entradas_sustentabilidade'
             cursor.execute(comando)
             resultado = []
             resultado = cursor.fetchall() # lê o banco de dados -> apenas para selects
             print('\nExibição dos dados de inserção:\n')
+            
             # Escrevendo a tabela
             print('='*162)
             print(f'{"| ID ":^5}', end='')

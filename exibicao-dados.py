@@ -15,6 +15,7 @@ cursor.execute(comando)
 resultado = []
 resultado = cursor.fetchall() # lê o banco de dados -> apenas para selects
 print('\nExibição dos dados de inserção:\n')
+
 # Escrevendo a tabela
 print('='*162)
 print(f'{"| ID ":^5}', end='')
@@ -112,6 +113,7 @@ comando = 'SELECT transporte_publico, bicicleta, caminhada, carro_comb_fossil, c
 cursor.execute(comando)
 dados_transporte = class_transporte = []
 dados_transporte = cursor.fetchall()
+
 # Conversão das letras de cada linha em classificação (1 - alta; 2 - moderada; 3 - baixa)
 for i in range(2, len(dados_transporte)-1):
     if dados_transporte[i][0] == 'S' or dados_transporte[i][1] == 'S' or dados_transporte[i][2] == 'S' or dados_transporte[i][4] == 'S':
@@ -123,6 +125,7 @@ for i in range(2, len(dados_transporte)-1):
             class_transporte.append(3)
 
 print('\nMédia da classificação de transportes: ', end='')
+
 # Análise dos dados convertidos
 if (not 3 in class_transporte) and (not 2 in class_transporte):
     print('Alta sustentabilidade\n')
