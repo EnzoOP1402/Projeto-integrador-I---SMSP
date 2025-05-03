@@ -143,10 +143,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '',
-    user='',
-    password='',
-    database=''
+    host = '127.0.0.1',
+    user='root',
+    password='EnzoPazian140207',
+    database='teste_py'
 )
 
 cursor = connection.cursor()
@@ -231,18 +231,94 @@ while True:
         # Alteração de dados
         case 2:
 
-            data = str(input('informe a data da inserção (AAAA-MM-DD): ')) # Utilizando a data como referência
-            id =int(input('Insira um ID: '))
-            print('-consumo_ag\n -consumo_energia\n -pct_lixo\n -transporte_publico\n -bicicleta\n -caminhada\n -carro_comb_fossil\n -carro_eltrico\n -carona')
+            id = int(input('Informe o ID do registro a ser alterado: ')) # Utilizando o ID como parâmetro para a alteração - chave primária
+            nova_class = ['','']
+            while True:
+                coluna = int(input('\nSelecione o campo que você deseja alterar:\n[1] - Data de registro\n[2] - Consumo de água: \n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
+                match coluna:
+                    case 1:
+                        valor = input('Informe seguindo o parâmetro (AAAA-MM-DD) o novo valor para o campo: ').upper() # Informando o novo valor
+                        coluna = 'data_registro' # Identifica a coluna a ser alterada
+                        tipo_dado = 'str' # Define o tipo de dado do campo
+                        break
+                    case 2:
+                        valor = float(input('Informe em Litros o novo valor para o campo: '))
+                        coluna = 'consumo_agua'
+                        tipo_dado = 'float'
+                        if (valor >= 150): # Atualizando as classificações com base no novo valor
+                            if (valor > 200):
+                                nova_class[0] = 'classificacao_agua'
+                                nova_class[1] = 'Baixa Sustentabilidade'
+                            else:
+                                nova_class[0] = 'classificacao_agua'
+                                nova_class[1] = 'Moderada Sustentabilidade'
+                        else:
+                            nova_class[0] = 'classificacao_agua'
+                            nova_class[1] = 'Alta Sustentabilidade'
+                        break
+                    case 3:
+                        valor = float(input('Informe em Kwh o novo valor para o campo: '))
+                        coluna = 'consumo_energia'
+                        tipo_dado = 'float'
+                        break
+                    case 4:
+                        valor = float(input('Informe em Kg o novo valor para o campo: '))
+                        coluna = 'qtde_lixo'
+                        tipo_dado = 'float'
+                        break
+                    case 5:
+                        valor = float(input('Informe em % o novo valor para o campo: '))
+                        coluna = 'pct_lixo'
+                        tipo_dado = 'float'
+                        break
+                    case 6: # Dados de transporte
+                        while True:
+                            coluna = int(input('\nSelecione o dado de transporte que você deseja alterar:\n[1] - Uso de transporte público\n[2] - Uso de bicicleta\n[3] - Caminhada\n[4] - Uso de carro movido a combustível fóssil\n[5] - Uso de carro elétrico\n[6] - Uso de carona compartilhada\n\n>> '))
+                            match coluna:
+                                case 1:
+                                    coluna = 'transporte_publico'
+                                    tipo_dado = 'str'
+                                    break
+                                case 2:
+                                    coluna = 'bicicleta'
+                                    tipo_dado = 'str'
+                                    break
+                                case 3:
+                                    coluna = 'caminhada'
+                                    tipo_dado = 'str'
+                                    break
+                                case 4:
+                                    coluna = 'carro_comb_fossil'
+                                    tipo_dado = 'str'
+                                    break
+                                case 5:
+                                    coluna = 'carro_eletrico'
+                                    tipo_dado = 'str'
+                                    break
+                                case 6:
+                                    coluna = 'carona'
+                                    tipo_dado = 'str'
+                                    break
+                                case _:
+                                    print('Opção inválida! Tente novamente.\n')
+                        
+                        print('>> Os campos de transporte só aceitam valores "S" e "N"')
+                        valor = input('Informe o novo valor para o campo: ').upper() # Informando o novo valor
+                        break
+                    case _:
+                        print('Opção inválida! Tente novamente.\n')
 
-            coluna = str(input('informe qual dos atributos acima deseja alterar: ')) # Coluna do dado a ser alterado
-            valor = str(input('informe o novo valor: ')) # Informando o novo valor
-
-            comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = {valor} WHERE data_registro = {data} and id = {id}'
+            if tipo_dado == 'str':
+                comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = "{valor}" WHERE id = {id}'
+            elif tipo_dado == 'float' or tipo_dado == 'int':
+                comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = {valor} WHERE id = {id}'    
 
             cursor.execute(comando)
             connection.commit() # Editar banco de dados
-            print('Alterou')
+
+            # Alterando os dados na tabela de classificações
+
+            print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...')
 
         # Apagamento de dados
         case 3:
