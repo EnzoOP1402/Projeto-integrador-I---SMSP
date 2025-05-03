@@ -231,7 +231,15 @@ while True:
         # Alteração de dados
         case 2:
 
-            id = int(input('Informe o ID do registro a ser alterado: ')) # Utilizando o ID como parâmetro para a alteração - chave primária
+            while True:
+                id = int(input('\nInforme o ID do registro a ser alterado: ')) # Utilizando o ID como parâmetro para a alteração - chave primária
+                cursor.execute(f'SELECT * FROM pi_entradas_sustentabilidade WHERE id = {id}') # Garantindo que o ID informado existe nos registros
+                ids_existentes = []
+                ids_existentes = cursor.fetchall()
+                if len(ids_existentes) == 0: # Verificando se a lista não está vazia
+                    print('\nO ID informado não existe na tabela. Tente novamente.\n')
+                else:
+                    break
             nova_class = ['','']
             while True:
                 coluna = int(input('\nSelecione o campo que você deseja alterar:\n[1] - Data de registro\n[2] - Consumo de água: \n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
@@ -245,21 +253,27 @@ while True:
                         valor = float(input('Informe em Litros o novo valor para o campo: '))
                         coluna = 'consumo_agua'
                         tipo_dado = 'float'
+                        nova_class[0] = 'classificacao_agua'
                         if (valor >= 150): # Atualizando as classificações com base no novo valor
                             if (valor > 200):
-                                nova_class[0] = 'classificacao_agua'
                                 nova_class[1] = 'Baixa Sustentabilidade'
                             else:
-                                nova_class[0] = 'classificacao_agua'
                                 nova_class[1] = 'Moderada Sustentabilidade'
                         else:
-                            nova_class[0] = 'classificacao_agua'
                             nova_class[1] = 'Alta Sustentabilidade'
                         break
                     case 3:
                         valor = float(input('Informe em Kwh o novo valor para o campo: '))
                         coluna = 'consumo_energia'
                         tipo_dado = 'float'
+                        nova_class[0] = 'classificacao_energia'
+                        if (consumo_energia >= 5): 
+                            if (consumo_energia > 10):
+                                nova_class[1] = 'Baixa Sustentabilidade'
+                            else: 
+                                nova_class[1] = 'Moderada Sustentabilidade'
+                        else:
+                            nova_class[1] = 'Alta Sustentabilidade'
                         break
                     case 4:
                         valor = float(input('Informe em Kg o novo valor para o campo: '))
@@ -270,8 +284,17 @@ while True:
                         valor = float(input('Informe em % o novo valor para o campo: '))
                         coluna = 'pct_lixo'
                         tipo_dado = 'float'
+                        nova_class[0] = 'classificacao_pct_lixo'
+                        if (residuos_reciclaveis <= 50):
+                            if (residuos_reciclaveis < 20):
+                                nova_class[1] = 'Baixa Sustentabilidade'
+                            else: 
+                                nova_class[1] = 'Moderada Sustentabilidade'
+                        else:
+                            nova_class[1] = 'Alta Sustentabilidade'
                         break
                     case 6: # Dados de transporte
+                        nova_class[0] = 'classificacao_transporte'
                         while True:
                             coluna = int(input('\nSelecione o dado de transporte que você deseja alterar:\n[1] - Uso de transporte público\n[2] - Uso de bicicleta\n[3] - Caminhada\n[4] - Uso de carro movido a combustível fóssil\n[5] - Uso de carro elétrico\n[6] - Uso de carona compartilhada\n\n>> '))
                             match coluna:
@@ -308,15 +331,30 @@ while True:
                     case _:
                         print('Opção inválida! Tente novamente.\n')
 
-            if tipo_dado == 'str':
+            if tipo_dado == 'str': # Verificando o tipo de dado para adequar o comando de atualização
                 comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = "{valor}" WHERE id = {id}'
             elif tipo_dado == 'float' or tipo_dado == 'int':
                 comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = {valor} WHERE id = {id}'    
 
-            cursor.execute(comando)
+            cursor.execute(comando) # Executando o comando de atualização
             connection.commit() # Editar banco de dados
 
             # Alterando os dados na tabela de classificações
+            if nova_class[0] == 'classificacao_transporte': # Analisando os novos dados de transporte para alterar a classificação
+                comando = f'SELECT transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eletrico, carona FROM pi_entradas_sustentabilidade WHERE id = {id}' # Obtendo os dados de transporte com as informações atualizadas
+                cursor.execute(comando)
+                dados_transporte = cursor.fetchone()
+                if dados_transporte[0]=='S' or dados_transporte[1]=='S' or dados_transporte[2]=='S' or dados_transporte[4]=='S':
+                    if dados_transporte[3]=='S' or dados_transporte[5]=='S':
+                        nova_class[1] = 'Moderada Sustentabilidade'
+                    else: 
+                        nova_class[1] = 'Alta Sustentabilidade'
+                else:
+                    nova_class[1] = 'Baixa Sustentabilidade'
+
+
+            cursor.execute(f'UPDATE pi_classificacoes_sustentabilidade SET {nova_class[0]} = "{nova_class[1]}" WHERE id = {id}') # Atualizando a classificação com base no novo valor
+            connection.commit()
 
             print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...')
 
