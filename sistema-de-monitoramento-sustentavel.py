@@ -24,6 +24,14 @@ def criptografia(nome):
         if pos == '25':
             I.append(0)
         else:
+            I.append(pos+1)   
+
+    # Caso a palavra tenha um tamanho ímpar, repete a última letra 
+    if len(nome)%2 != 0:
+        pos = T.index(nome[-1])
+        if pos == '25':
+            I.append(0)
+        else:
             I.append(pos+1)
 
     # Declarando a matriz de texto comum
@@ -164,69 +172,129 @@ while True:
 
         # Inserção de dados
         case 1:
-            id = int(input('informe o número para identificação: '))
-
-            data = date.today()
-
-            consumo_agua = float(input("\nInforme o quanto de água você consumiu hoje (Aprox., em Litros): "))
-
-            consumo_energia = float(input("\nInforme quanto de energia elétrica você consumiu hoje (em kWh): "))
-
-            residuos_nao_reciclaveis = float(input("\nInforme quantos Kg de resíduos não recicláveis você produziu hoje: ")) 
-
-            residuos_reciclaveis = float(input("\nInforme a porcentagem de resíduos recicláveis que você gerou hoje: "))
+            # Inicializando a lista de entrada
+            dados_entrada = ['',0,0,0,0,['N','N','N','N','N','N']]
+            # Inicializando a lista de classificações
+            class_entradas = ['','','','']
+            # Data atual
+            dados_entrada[0] = date.today()
+            # Água
+            dados_entrada[1] = float(input("\nInforme o quanto de água você consumiu hoje (Aprox., em Litros): "))
+            # Energia
+            dados_entrada[2] = float(input("\nInforme quanto de energia elétrica você consumiu hoje (em kWh): "))
+            # Quantidade de lixo
+            dados_entrada[3] = float(input("\nInforme quantos Kg de resíduos não recicláveis você produziu hoje: ")) 
+            # Porcentagem de lixo
+            dados_entrada[4] = float(input("\nInforme a porcentagem de resíduos recicláveis que você gerou hoje: "))
 
             #Inserção e validação inicial dos dados de transporte
 
-            print("Indique quais meios de transporte foram utilizados por você hoje\n")
+            print("\nIndique quais meios de transporte foram utilizados por você hoje\n")
 
             while True:
-                transporte_publico = str(input("Transporte público (ônibus, metrô ou trem) [S/N]\n>> ")).upper()
-                if transporte_publico == 'S' or transporte_publico == 'N':
+                dados_entrada[5][0] = str(input("Transporte público (ônibus, metrô ou trem) [S/N]\n>> ")).upper()
+                if dados_entrada[5][0] == 'S' or dados_entrada[5][0] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
 
             while True:
-                bicicleta = str(input("Bicicleta [S/N]\n>> ")).upper()
-                if bicicleta == 'S' or bicicleta == 'N':
+                dados_entrada[5][1] = str(input("Bicicleta [S/N]\n>> ")).upper()
+                if dados_entrada[5][1] == 'S' or dados_entrada[5][1] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
                     
             while True: 
-                caminhada = str(input("Caminhada [S/N]\n>> ")).upper()
-                if caminhada == 'S' or caminhada == 'N':
+                dados_entrada[5][2] = str(input("Caminhada [S/N]\n>> ")).upper()
+                if dados_entrada[5][2] == 'S' or dados_entrada[5][2] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
 
             while True:
-                carro_combustivel = str(input("Carro (combustível fóssil)? [S/N]\n>> ")).upper()
-                if carro_combustivel == 'S' or carro_combustivel == 'N':
+                dados_entrada[5][3] = str(input("Carro (combustível fóssil)? [S/N]\n>> ")).upper()
+                if dados_entrada[5][3] == 'S' or dados_entrada[5][3] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
 
             while True:
-                carro_eletrico = str(input("Carro elétrico? [S/N]\n>> ")).upper()
-                if carro_eletrico == 'S' or carro_eletrico == 'N':
+                dados_entrada[5][4] = str(input("Carro elétrico? [S/N]\n>> ")).upper()
+                if dados_entrada[5][4] == 'S' or dados_entrada[5][4] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
 
             while True:
-                carona_compartilhada = str(input("Carona compartilhada (combustível fóssil) [S/N]\n>> ")).upper()
-                if carona_compartilhada == 'S' or carona_compartilhada == 'N':
+                dados_entrada[5][5] = str(input("Carona compartilhada (combustível fóssil) [S/N]\n>> ")).upper()
+                if dados_entrada[5][5] == 'S' or dados_entrada[5][5] == 'N':
                     break
                 else:
                     print("Resposta inválida\n")
 
             # Inserção de dados mysql 
-            comando = f'INSERT INTO pi_entradas_sustentabilidade(id, data_registro, consumo_ag, consumo_energia, pct_lixo, transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eltrico, carona) VALUES ( {id}, {data}, {consumo_agua}, {consumo_energia}, {media_lixo}, {transporte_publico}, {bicicleta}, {caminhada}, {carro_combustivel}, {carro_eletrico}, {carona_compartilhada})'
-                
+            comando = f'INSERT INTO pi_entradas_sustentabilidade(data_registro, consumo_agua, consumo_energia, qtde_lixo, pct_lixo, transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eletrico, carona) VALUES ("{dados_entrada[0]}", {dados_entrada[1]}, {dados_entrada[2]}, {dados_entrada[3]}, {dados_entrada[4]}, "{dados_entrada[5][0]}", "{dados_entrada[5][1]}", "{dados_entrada[5][2]}", "{dados_entrada[5][3]}", "{dados_entrada[5][4]}", "{dados_entrada[5][5]}")'            
             cursor.execute(comando)
             connection.commit() # Editar banco de dados
+
+            # Obtendo o último ID para a inserção na tabela de classificações
+            cursor.execute('SELECT LAST_INSERT_ID()')
+            ultimo_id = cursor.fetchone()
+
+            # Classificando as entradas
+            # Consumo de água
+            if (dados_entrada[1] >= 150):
+                if (dados_entrada[1] > 200):
+                    class_entradas[0] = 'Baixa Sustentabilidade'
+                else:
+                    class_entradas[0] = 'Moderada Sustentabilidade'
+            else:
+                class_entradas[0] = 'Alta Sustentabilidade'
+
+            # Consumo de energia
+            if (dados_entrada[2] >= 5): 
+                if (dados_entrada[2] > 10):
+                    class_entradas[1] = 'Baixa Sustentabilidade'
+                else:
+                    class_entradas[1] = 'Moderada Sustentabilidade'
+            else:
+                class_entradas[1] = 'Alta Sustentabilidade'
+
+            # Porcentagem de lixo
+            if (dados_entrada[4] <= 50):
+                if (dados_entrada[4] < 20):
+                    class_entradas[2] = 'Baixa Sustentabilidade'
+                else:
+                    class_entradas[2] = 'Moderada Sustentabilidade'
+            else:
+                class_entradas[2] = 'Alta Sustentabilidade'
+
+            # Meios de transporte
+            if dados_entrada[5][0] == 'S' or dados_entrada[5][1] == 'S' or dados_entrada[5][2] == 'S' or dados_entrada[5][4] == 'S':
+                if dados_entrada[5][3]=='S' or dados_entrada[5][5]=='S':
+                    class_entradas[3] = 'Moderda Sustentabilidade'
+                else:
+                    class_entradas[3] = 'Alta Sustentabilidade'
+            else:
+                class_entradas[3] = 'Baixa Sustentabilidade'
+
+            # Criptografando as classificações
+            # Água
+            class_entradas[0] = criptografia(class_entradas[0])
+            # Energia
+            class_entradas[1] = criptografia(class_entradas[1])
+            # Lixo
+            class_entradas[2] = criptografia(class_entradas[2])
+            # Transporte
+            class_entradas[3] = criptografia(class_entradas[3])
+
+            # Inserindo as classificações criptografadas na tabela
+            comando = f'INSERT INTO pi_classificacoes_sustentabilidade(id, classificacao_agua, classificacao_energia, classificacao_pct_lixo, classificacao_transporte) VALUES ({ultimo_id[0]}, "{class_entradas[0]}", "{class_entradas[1]}", "{class_entradas[2]}", "{class_entradas[2]}")'            
+            cursor.execute(comando)
+            connection.commit() # Editar banco de dados
+
+            print('\nInserção realizada com sucesso!!\nTe redirecionando para o menu principal...')
 
         # Alteração de dados
         case 2:
@@ -267,8 +335,8 @@ while True:
                         coluna = 'consumo_energia'
                         tipo_dado = 'float'
                         nova_class[0] = 'classificacao_energia'
-                        if (consumo_energia >= 5): 
-                            if (consumo_energia > 10):
+                        if (valor >= 5): 
+                            if (valor > 10):
                                 nova_class[1] = 'Baixa Sustentabilidade'
                             else: 
                                 nova_class[1] = 'Moderada Sustentabilidade'
@@ -285,8 +353,8 @@ while True:
                         coluna = 'pct_lixo'
                         tipo_dado = 'float'
                         nova_class[0] = 'classificacao_pct_lixo'
-                        if (residuos_reciclaveis <= 50):
-                            if (residuos_reciclaveis < 20):
+                        if (valor <= 50):
+                            if (valor < 20):
                                 nova_class[1] = 'Baixa Sustentabilidade'
                             else: 
                                 nova_class[1] = 'Moderada Sustentabilidade'
@@ -360,13 +428,25 @@ while True:
 
         # Apagamento de dados
         case 3:
-
-            data = str(input('informe a data da inserção: ')) # Utilizando a data como referência
-            id = int(input('Insira um ID: '))
-            comando = f'DELETE FROM pi_entradas_sustentabilidade WHERE data_registro = {data} and id = {id}'
+            # Verificação do ID
+            while True:
+                id = int(input('\nInforme o ID do registro a ser alterado: ')) # Utilizando o ID como parâmetro para a alteração - chave primária
+                cursor.execute(f'SELECT * FROM pi_entradas_sustentabilidade WHERE id = {id}') # Garantindo que o ID informado existe nos registros
+                ids_existentes = []
+                ids_existentes = cursor.fetchall()
+                if len(ids_existentes) == 0: # Verificando se a lista não está vazia
+                    print('\nO ID informado não existe na tabela. Tente novamente.\n')
+                else:
+                    break
+            # Apagando dados da tabela de classificações
+            comando = f'DELETE FROM pi_classificacoes_sustentabilidade WHERE id = {id}'
             cursor.execute(comando)
-            connection.commit() # Editar banco de dados
-            print('apagou')
+            connection.commit()
+            # Apagando dados da tabela de entradas
+            comando = f'DELETE FROM pi_entradas_sustentabilidade WHERE id = {id}'
+            cursor.execute(comando)
+            connection.commit()
+            print('\nCampo apagado com sucesso!!\nTe redirecionando para o menu principal...')
 
         # Listagem de registros
         case 4:
@@ -473,10 +553,11 @@ while True:
             # Tipos de transporte
             comando = 'SELECT transporte_publico, bicicleta, caminhada, carro_comb_fossil, carro_eletrico, carona FROM pi_entradas_sustentabilidade'
             cursor.execute(comando)
-            dados_transporte = class_transporte = []
+            dados_transporte = []
+            class_transporte = []
             dados_transporte = cursor.fetchall()
             # Conversão das letras de cada linha em classificação (1 - alta; 2 - moderada; 3 - baixa)
-            for i in range(2, len(dados_transporte)-1):
+            for i in range(len(dados_transporte)):
                 if dados_transporte[i][0] == 'S' or dados_transporte[i][1] == 'S' or dados_transporte[i][2] == 'S' or dados_transporte[i][4] == 'S':
                     if dados_transporte[i][3] == 'S' or dados_transporte[i][5] == 'S':
                         class_transporte.append(2)
@@ -506,5 +587,5 @@ while True:
 cursor.close()
 connection.close()
 
-print('Encerrando programa...')
+print('\nEncerrando programa...')
 print('ATÉ A PRÓXIMA!')

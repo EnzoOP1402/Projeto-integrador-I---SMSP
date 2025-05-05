@@ -115,7 +115,7 @@ dados_transporte = class_transporte = []
 dados_transporte = cursor.fetchall()
 
 # Conversão das letras de cada linha em classificação (1 - alta; 2 - moderada; 3 - baixa)
-for i in range(2, len(dados_transporte)-1):
+for i in range(len(dados_transporte)):
     if dados_transporte[i][0] == 'S' or dados_transporte[i][1] == 'S' or dados_transporte[i][2] == 'S' or dados_transporte[i][4] == 'S':
         if dados_transporte[i][3] == 'S' or dados_transporte[i][5] == 'S':
             class_transporte.append(2)
