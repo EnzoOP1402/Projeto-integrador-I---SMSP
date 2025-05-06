@@ -155,8 +155,16 @@ def descriptografia(chave, nome_cifrado):
             texto_descripto += descripto[i][j]
 
     # Excluindo a última letra do texto, caso ela seja repetida
-    if texto_cripto[-1] == texto_cripto[-2]:
-        texto_cripto = texto_cripto[:len(texto_cripto)-1]
+    if texto_descripto[-1] == texto_descripto[-2]:
+        texto_descripto = texto_descripto[:len(texto_descripto)-1]
+
+    # Adicionando espaçamento para garantir uma melhor exibição dos dados
+    if texto_descripto == 'BAIXASUSTENTABILIDADE':
+        texto_descripto = 'BAIXA SUSTENTABILIDADE'
+    elif texto_descripto == 'MODERADASUSTENTABILIDADE':
+        texto_descripto = 'MODERADA SUSTENTABILIDADE'
+    elif texto_descripto == 'ALTASUSTENTABILIDADE':
+        texto_descripto = 'ALTA SUSTENTABILIDADE'
 
     # Retornando o texto descriptgrafado
     return texto_descripto
@@ -175,14 +183,14 @@ connection = mysql.connector.connect(
 cursor = connection.cursor()
 
 print('-'*162)
-print(f'{">=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL >=<>=<>=<":^162}')
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^162}\033[0m')
 print('-'*162)
 
 # Looping de funcionamento do programa
 while True:
 
     # Exibição do menu
-    menu = int(input('\nSelecione a opção desejada:\n\n[1] - Inserir dados\n[2] - Alterar dados\n[3] - Apagar dados\n[4] - Listar registros\n[5] - Listar médias\n[6] - Sair\n\n>> '))
+    menu = int(input('\n\033[1mSelecione a opção desejada:\033[0m\n\n[1] - Inserir dados\n[2] - Alterar dados\n[3] - Apagar dados\n[4] - Listar registros\n[5] - Listar médias\n[6] - Sair\n\n>> '))
     match menu:
 
         # Inserção de dados
@@ -309,7 +317,8 @@ while True:
             cursor.execute(comando)
             connection.commit() # Editar banco de dados
 
-            print('\nInserção realizada com sucesso!!\nTe redirecionando para o menu principal...')
+            print('\nInserção realizada com sucesso!!\nTe redirecionando para o menu principal...\n')
+            print('-='*81)
 
         # Alteração de dados
         case 2:
@@ -435,11 +444,13 @@ while True:
                 else:
                     nova_class[1] = 'Baixa Sustentabilidade'
 
+            nova_class[1] = criptografia(chave, nova_class[1])
 
             cursor.execute(f'UPDATE pi_classificacoes_sustentabilidade SET {nova_class[0]} = "{nova_class[1]}" WHERE id = {id}') # Atualizando a classificação com base no novo valor
             connection.commit()
 
-            print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...')
+            print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...\n')
+            print('-='*81)
 
         # Apagamento de dados
         case 3:
@@ -461,7 +472,8 @@ while True:
             comando = f'DELETE FROM pi_entradas_sustentabilidade WHERE id = {id}'
             cursor.execute(comando)
             connection.commit()
-            print('\nCampo apagado com sucesso!!\nTe redirecionando para o menu principal...')
+            print('\nCampo apagado com sucesso!!\nTe redirecionando para o menu principal...\n')
+            print('-='*81)
 
         # Listagem de registros
         case 4:
@@ -475,13 +487,13 @@ while True:
             
             # Escrevendo a tabela
             print('='*162)
-            print(f'{"| ID ":^5}', end='')
+            print(f'\033[1m{"| ID ":^5}', end='')
             print(f'{"| Data de registro ":^15}', end='')
             print(f'{"| Consumo de água ":^18}', end='')
             print(f'{"| Consumo de energia ":^21}', end='')
             print(f'{"| Quantidade de lixo gerado ":^28}', end='')
             print(f'{"| % de lixo reciclável gerado ":^30}', end='')
-            print(f'{"| Meios de transportes utilizados":<40}', end=f'{"|"}\n')
+            print(f'{"| Meios de transportes utilizados":<40}', end=f'|\033[0m\n')
             print('='*162)
             for i in range(len(resultado)):
                 print(f'|{resultado[i][0]:^4}', end='|')
@@ -500,39 +512,40 @@ while True:
             resultado_class = cursor.fetchall()
             print('\nExibição da classificação dos dados armazenados:\n')
             print('='*143)
-            print(f'{"| ID ":^5}', end='|')
+            print(f'\033[1m{"| ID ":^5}', end='|')
             print(f'{"Consumo de água ":^30}', end='|')
             print(f'{"Consumo de energia ":^30}', end='|')
             print(f'{"% de lixo reciclável gerado ":^32}', end='|')
-            print(f'{"Meios de transportes utilizados":^41}', end=f'{"|"}\n')
+            print(f'{"Meios de transportes utilizados":^41}', end=f'|\033[0m\n')
             print('='*143)
             for i in range(len(resultado_class)):
                 print(f'|{resultado_class[i][0]:^4}', end='|')
-                print(f'{f"{resultado_class[i][1]}":^30}', end='|')
-                print(f'{f"{resultado_class[i][2]}":^30}', end='|')
-                print(f'{f"{resultado_class[i][3]}":^32}', end='| ')
-                print(f'{resultado_class[i][4]:^40}', end='|\n')
+                print(f'{f"{descriptografia(chave, resultado_class[i][1])}":^30}', end='|')
+                print(f'{f"{descriptografia(chave, resultado_class[i][2])}":^30}', end='|')
+                print(f'{f"{descriptografia(chave, resultado_class[i][3])}":^32}', end='| ')
+                print(f'{descriptografia(chave, resultado_class[i][4]):^40}', end='|\n')
                 print('-'*143)
 
         # Listagem de médias
         case 5:
             print('='*143)
-            print('Média dos dados coletados')
+            print(f'\033[1m{"MÉDIA DOS DADOS COLETADOS":^143}\033[0m')
             print('='*143)
 
             # Água
             comando = 'SELECT avg(consumo_agua) FROM pi_entradas_sustentabilidade'
             cursor.execute(comando)
             media_agua = cursor.fetchone()
-            print(f'\nMédia do consumo de água: {media_agua[0]:.2f} L')
+            print(f'\n\033[1m Média do consumo de água:\033[0m {media_agua[0]:.2f} L')
+            print("\033[1m Classificação do consumo de água: \033[0m", end='')
 
             if (media_agua[0] >= 150):
                 if (media_agua[0] > 200):
-                    print("Classificação do consumo de água: Baixa sustentabilidade\n")
+                    print("Baixa sustentabilidade\n")
                 else:
-                    print("Classificação do consumo de água: Moderada sustentabilidade\n")
+                    print("Moderada sustentabilidade\n")
             else:
-                print("Classificação do consumo de água: Alta sustentabilidade\n")
+                print("Alta sustentabilidade\n")
             print('-'*143)
 
             # Energia
@@ -540,29 +553,32 @@ while True:
             cursor.execute(comando)
             media_energia = cursor.fetchone()
 
-            print(f'\nMédia do consumo de energia: {media_energia[0]:.2f} kwH')
+            print(f'\n\033[1m Média do consumo de energia:\033[0m {media_energia[0]:.2f} kwH')
+            print("\033[1m Classificação do consumo de energia: \033[0m", end='')
+
             if (media_energia[0] >= 5): 
                 if (media_energia[0] > 10):
-                    print("Classificação do consumo de energia: Baixa sustentabilidade\n")
+                    print("Baixa sustentabilidade\n")
                 else: 
-                    print("Classificação do consumo de energia: Moderada sustentabilidade\n")
+                    print("Moderada sustentabilidade\n")
             else:
-                print("Classificação do consumo de energia: Alta sustentabilidade\n")  
+                print("Alta sustentabilidade\n")  
             print('-'*143) 
 
             #Porcentagem
             comando = 'SELECT avg(pct_lixo) FROM pi_entradas_sustentabilidade'
             cursor.execute(comando)
             media_lixo = cursor.fetchone()
-            print(f'\nMédia da porcentagem de lixo reciclável gerado: {media_lixo[0]:.2f}%')
+            print(f'\n\033[1m Média da porcentagem de lixo reciclável gerado:\033[0m {media_lixo[0]:.2f}%')
+            print("\033[1m Classificação do consumo da porcentagem de lixo reciclável gerado: \033[0m", end='')
 
             if (media_lixo[0] <= 50):
                 if (media_lixo[0] < 20):
-                    print("Classificação da geração de resíduos recicláveis: Baixa sustentabilidade\n")
+                    print("Baixa sustentabilidade\n")
                 else:
-                    print("Classificação da geração de resíduos recicláveis: Moderada sustentabilidade\n")
+                    print("Moderada sustentabilidade\n")
             else:
-                print("Classificação da geração de resíduos recicláveis: Alta sustentabilidade\n")
+                print("Alta sustentabilidade\n")
             print('-'*143)
 
             # Tipos de transporte
@@ -581,7 +597,7 @@ while True:
                 else:
                         class_transporte.append(3)
 
-            print('\nMédia da classificação de transportes: ', end='')
+            print('\n\033[1m Média da classificação de transportes:\033[0m ', end='')
             # Análise dos dados convertidos
             if (not 3 in class_transporte) and (not 2 in class_transporte):
                 print('Alta sustentabilidade\n')
@@ -602,5 +618,7 @@ while True:
 cursor.close()
 connection.close()
 
-print('\nEncerrando programa...')
-print('ATÉ A PRÓXIMA!')
+print('\nEncerrando programa...\n')
+print('-'*162)
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< ATÉ A PRÓXIMA! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^162}\033[0m')
+print('-'*162)
