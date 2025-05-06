@@ -7,11 +7,10 @@ from numpy import matmul, transpose
 # Declarando a tabela do alfabeto
 T = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-# Declarando a função de criptografia
-def criptografia(nome):
+chave = [[4,3],[1,2]]
 
-    # Declarando a matriz chave
-    chave = [[4, 3],[1,2]]
+# Declarando a função de criptografia
+def criptografia(chave, nome):
 
     nome = nome.upper().replace(' ', '')
 
@@ -83,8 +82,20 @@ def criptografia(nome):
     return texto_cripto
 
 # Declarando a função de descriptografia
-def descriptografia(nome_cifrado):
-    Matriz_inversa=[[42, -63],[-21,84]]
+def descriptografia(chave, nome_cifrado):
+    # Tabela dos inversos no Z26
+    TABELA = [[1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25],[1, 9, 21, 15, 3, 19, 7, 23, 11, 5, 17, 25]]
+
+    # Obtendo o determinante
+    det = chave[0][0]*chave[1][1] - chave[0][1] * chave[1][0]
+    # Obtendo o equivalente do determinante no conjunto Z6
+    det %= 26
+    # Encontrando o determinante na tabela dos inversos
+    indice_inverso = TABELA[0].index(det)
+    # Encontrando o equivalente do determinante na tabela dos inversos
+    inverso = TABELA[1][indice_inverso]
+    # Montando a matriz inversa
+    matriz_inversa = [[chave[1][1]*inverso, chave[0][1]*(-1)*inverso],[chave[1][0]*(-1)*inverso, chave[0][0]*inverso]]
 
     nome_cifrado = nome_cifrado.upper().replace(' ', '')
 
@@ -109,7 +120,7 @@ def descriptografia(nome_cifrado):
             P[1].append(V[i])
 
     # Declarando a matriz de texto comum
-    M = matmul(Matriz_inversa,P)
+    M = matmul(matriz_inversa,P)
 
     # Convertendo os valores para os números existentes no conjunto alfabeto
     for i in range(len(M)):
@@ -142,6 +153,10 @@ def descriptografia(nome_cifrado):
     for i in range(len(descripto)):
         for j in range(len(descripto[0])):
             texto_descripto += descripto[i][j]
+
+    # Excluindo a última letra do texto, caso ela seja repetida
+    if texto_cripto[-1] == texto_cripto[-2]:
+        texto_cripto = texto_cripto[:len(texto_cripto)-1]
 
     # Retornando o texto descriptgrafado
     return texto_descripto
@@ -281,13 +296,13 @@ while True:
 
             # Criptografando as classificações
             # Água
-            class_entradas[0] = criptografia(class_entradas[0])
+            class_entradas[0] = criptografia(chave, class_entradas[0])
             # Energia
-            class_entradas[1] = criptografia(class_entradas[1])
+            class_entradas[1] = criptografia(chave, class_entradas[1])
             # Lixo
-            class_entradas[2] = criptografia(class_entradas[2])
+            class_entradas[2] = criptografia(chave, class_entradas[2])
             # Transporte
-            class_entradas[3] = criptografia(class_entradas[3])
+            class_entradas[3] = criptografia(chave, class_entradas[3])
 
             # Inserindo as classificações criptografadas na tabela
             comando = f'INSERT INTO pi_classificacoes_sustentabilidade(id, classificacao_agua, classificacao_energia, classificacao_pct_lixo, classificacao_transporte) VALUES ({ultimo_id[0]}, "{class_entradas[0]}", "{class_entradas[1]}", "{class_entradas[2]}", "{class_entradas[2]}")'            
