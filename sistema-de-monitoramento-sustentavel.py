@@ -174,10 +174,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '127.0.0.1',
-    user='root',
-    password='EnzoPazian140207',
-    database='teste_py'
+    host = '',
+    user='',
+    password='',
+    database=''
 )
 
 cursor = connection.cursor()
