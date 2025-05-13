@@ -174,16 +174,16 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '127.0.0.1',
-    user='root',
-    password='EnzoPazian140207',
-    database='teste_py'
+    host = '',
+    user='',
+    password='',
+    database=''
 )
 
 cursor = connection.cursor()
 
 print('-'*200)
-print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
 print('-'*200)
 
 # Looping de funcionamento do programa
@@ -300,7 +300,7 @@ while True:
                 else:
                     class_entradas[3] = 'Alta Sustentabilidade'
             else:
-                if dados_entrada[5][3]=='N' or dados_entrada[5][5]=='N':
+                if dados_entrada[5][3]=='N' and dados_entrada[5][5]=='N':
                     class_entradas[3] = 'Alta Sustentabilidade'
                 else:
                     class_entradas[3] = 'Baixa Sustentabilidade'
@@ -332,12 +332,12 @@ while True:
                 ids_existentes = []
                 ids_existentes = cursor.fetchall()
                 if len(ids_existentes) == 0: # Verificando se a lista não está vazia
-                    print('\nO ID informado não existe na tabela. Tente novamente.\n')
+                    print('\n\033[1;31mO ID informado não existe na tabela. Tente novamente.\033[m\n')
                 else:
                     break
             nova_class = ['','']
             while True:
-                coluna = int(input('\nSelecione o campo que você deseja alterar:\n[1] - Data de registro\n[2] - Consumo de água: \n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
+                coluna = int(input('\n\033[1mSelecione o campo que você deseja alterar:\033[m\n[1] - Data de registro\n[2] - Consumo de água: \n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
                 match coluna:
                     case 1:
                         valor = input('Informe seguindo o parâmetro (AAAA-MM-DD) o novo valor para o campo: ').upper() # Informando o novo valor
@@ -391,7 +391,7 @@ while True:
                     case 6: # Dados de transporte
                         nova_class[0] = 'classificacao_transporte'
                         while True:
-                            coluna = int(input('\nSelecione o dado de transporte que você deseja alterar:\n[1] - Uso de transporte público\n[2] - Uso de bicicleta\n[3] - Caminhada\n[4] - Uso de carro movido a combustível fóssil\n[5] - Uso de carro elétrico\n[6] - Uso de carona compartilhada\n\n>> '))
+                            coluna = int(input('\n\033[1mSelecione o dado de transporte que você deseja alterar:\033[m\n[1] - Uso de transporte público\n[2] - Uso de bicicleta\n[3] - Caminhada\n[4] - Uso de carro movido a combustível fóssil\n[5] - Uso de carro elétrico\n[6] - Uso de carona compartilhada\n\n>> '))
                             match coluna:
                                 case 1:
                                     coluna = 'transporte_publico'
@@ -418,13 +418,13 @@ while True:
                                     tipo_dado = 'str'
                                     break
                                 case _:
-                                    print('Opção inválida! Tente novamente.\n')
+                                    print('\n\033[1;31mOpção inválida! Tente novamente.\033[m\n')
                         
                         print('>> Os campos de transporte só aceitam valores "S" e "N"')
                         valor = input('Informe o novo valor para o campo: ').upper() # Informando o novo valor
                         break
                     case _:
-                        print('Opção inválida! Tente novamente.\n')
+                        print('\n\033[1;31mOpção inválida! Tente novamente.\033[m\n')
 
             if tipo_dado == 'str': # Verificando o tipo de dado para adequar o comando de atualização
                 comando = f'UPDATE pi_entradas_sustentabilidade SET {coluna} = "{valor}" WHERE id = {id}'
@@ -445,7 +445,7 @@ while True:
                     else: 
                         nova_class[1] = 'Alta Sustentabilidade'
                 else:
-                    if dados_transporte[3]=='N' or dados_transporte[5]=='N':
+                    if dados_transporte[3]=='N' and dados_transporte[5]=='N':
                         nova_class[1] = 'Alta Sustentabilidade'
                     else:
                         nova_class[1] = 'Baixa Sustentabilidade'
@@ -467,7 +467,7 @@ while True:
                 ids_existentes = []
                 ids_existentes = cursor.fetchall()
                 if len(ids_existentes) == 0: # Verificando se a lista não está vazia
-                    print('\nO ID informado não existe na tabela. Tente novamente.\n')
+                    print('\n\033[1;31mO ID informado não existe na tabela. Tente novamente.\033[m\n')
                 else:
                     break
             # Apagando dados da tabela de classificações
@@ -489,7 +489,7 @@ while True:
             cursor.execute(comando)
             resultado = []
             resultado = cursor.fetchall() # lê o banco de dados -> apenas para selects
-            print('\nExibição dos dados de inserção:\n')
+            print('\n\033[1mExibição dos dados de inserção:\033[0m\n')
             
             # Escrevendo a tabela
             print('='*200)
@@ -524,7 +524,7 @@ while True:
                     transportes.append('Carona')
                 if resultado[i][6:12] == ['N', 'N', 'N', 'N', 'N', 'N']:
                     transportes.append('Nenhum transporte utilizado')
-                print(f'{str(transportes):<76}', end='|\n')
+                print(f'{str(transportes[:]):<76}', end='|\n')
                 print('-'*200)
 
             # Exibição da classificação dos registros
@@ -532,7 +532,7 @@ while True:
             cursor.execute(comando)
             resultado_class = []
             resultado_class = cursor.fetchall()
-            print('\nExibição da classificação dos dados armazenados:\n')
+            print('\n\033[1mExibição da classificação dos dados armazenados:\033[0m\n')
             print('='*143)
             print(f'\033[1m{"| ID ":^5}', end='|')
             print(f'{"Consumo de água ":^30}', end='|')
@@ -542,9 +542,9 @@ while True:
             print('='*143)
             for i in range(len(resultado_class)):
                 print(f'|{resultado_class[i][0]:^4}', end='|')
-                print(f'{f"{descriptografia(chave, resultado_class[i][1])}":^30}', end='|')
-                print(f'{f"{descriptografia(chave, resultado_class[i][2])}":^30}', end='|')
-                print(f'{f"{descriptografia(chave, resultado_class[i][3])}":^32}', end='| ')
+                print(f'{descriptografia(chave, resultado_class[i][1]):^30}', end='|')
+                print(f'{descriptografia(chave, resultado_class[i][2]):^30}', end='|')
+                print(f'{descriptografia(chave, resultado_class[i][3]):^32}', end='| ')
                 print(f'{descriptografia(chave, resultado_class[i][4]):^40}', end='|\n')
                 print('-'*143)
 
@@ -635,12 +635,12 @@ while True:
 
         # Opções inválidas
         case _:
-            print('Opção inválida! Tente novamente.\n')
+            print('\n\033[1;31mOpção inválida! Tente novamente.\033[m\n')
 
 cursor.close()
 connection.close()
 
 print('\nEncerrando programa...\n')
 print('-'*200)
-print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< ATÉ A PRÓXIMA! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< ATÉ A PRÓXIMA! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
 print('-'*200)
