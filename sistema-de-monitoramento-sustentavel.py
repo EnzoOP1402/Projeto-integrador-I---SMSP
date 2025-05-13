@@ -174,17 +174,17 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '',
-    user='',
-    password='',
-    database=''
+    host = '127.0.0.1',
+    user='root',
+    password='EnzoPazian140207',
+    database='teste_py'
 )
 
 cursor = connection.cursor()
 
-print('-'*162)
-print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^162}\033[0m')
-print('-'*162)
+print('-'*200)
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< BEM VINDO(A) AO SISTEMA DE MONITORAMENTO DE SUSTENTABILIDADE PESSOAL! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
+print('-'*200)
 
 # Looping de funcionamento do programa
 while True:
@@ -300,7 +300,10 @@ while True:
                 else:
                     class_entradas[3] = 'Alta Sustentabilidade'
             else:
-                class_entradas[3] = 'Baixa Sustentabilidade'
+                if dados_entrada[5][3]=='N' or dados_entrada[5][5]=='N':
+                    class_entradas[3] = 'Alta Sustentabilidade'
+                else:
+                    class_entradas[3] = 'Baixa Sustentabilidade'
 
             # Criptografando as classificações
             # Água
@@ -318,7 +321,7 @@ while True:
             connection.commit() # Editar banco de dados
 
             print('\nInserção realizada com sucesso!!\nTe redirecionando para o menu principal...\n')
-            print('-='*81)
+            print('-='*100)
 
         # Alteração de dados
         case 2:
@@ -442,7 +445,10 @@ while True:
                     else: 
                         nova_class[1] = 'Alta Sustentabilidade'
                 else:
-                    nova_class[1] = 'Baixa Sustentabilidade'
+                    if dados_transporte[3]=='N' or dados_transporte[5]=='N':
+                        nova_class[1] = 'Alta Sustentabilidade'
+                    else:
+                        nova_class[1] = 'Baixa Sustentabilidade'
 
             nova_class[1] = criptografia(chave, nova_class[1])
 
@@ -450,7 +456,7 @@ while True:
             connection.commit()
 
             print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...\n')
-            print('-='*81)
+            print('-='*100)
 
         # Apagamento de dados
         case 3:
@@ -473,7 +479,7 @@ while True:
             cursor.execute(comando)
             connection.commit()
             print('\nCampo apagado com sucesso!!\nTe redirecionando para o menu principal...\n')
-            print('-='*81)
+            print('-='*100)
 
         # Listagem de registros
         case 4:
@@ -486,15 +492,16 @@ while True:
             print('\nExibição dos dados de inserção:\n')
             
             # Escrevendo a tabela
-            print('='*162)
+            print('='*200)
             print(f'\033[1m{"| ID ":^5}', end='')
             print(f'{"| Data de registro ":^15}', end='')
             print(f'{"| Consumo de água ":^18}', end='')
             print(f'{"| Consumo de energia ":^21}', end='')
             print(f'{"| Quantidade de lixo gerado ":^28}', end='')
-            print(f'{"| % de lixo reciclável gerado ":^30}', end='')
-            print(f'{"| Meios de transportes utilizados":<40}', end=f'|\033[0m\n')
-            print('='*162)
+            print(f'{"| % de lixo reciclável gerado ":^30}', end='| ')
+            print(f'{"Meios de transportes utilizados":<76}', end=f'|\033[0m\n')
+            print('='*200)
+            transportes = []
             for i in range(len(resultado)):
                 print(f'|{resultado[i][0]:^4}', end='|')
                 print(f'{str(resultado[i][1]):^18}', end='|')
@@ -502,8 +509,23 @@ while True:
                 print(f'{f"{resultado[i][3]} KwH":^20}', end='|')
                 print(f'{f"{resultado[i][4]} Kg":^27}', end='|')
                 print(f'{f"{resultado[i][5]}%":^29}', end='| ')
-                print(resultado[i][6:12], end=f'{"|":>9}\n')
-                print('-'*162)
+                transportes.clear()
+                if resultado[i][6] == 'S':
+                    transportes.append('Transp. público')
+                if resultado[i][7] == 'S':
+                    transportes.append('Bicicleta')
+                if resultado[i][8] == 'S':
+                    transportes.append('Caminhada')
+                if resultado[i][9] == 'S':
+                    transportes.append('Carro comb. fóssil')
+                if resultado[i][10] == 'S':
+                    transportes.append('Carro elétrico')
+                if resultado[i][11] == 'S':
+                    transportes.append('Carona')
+                if resultado[i][6:12] == ['N', 'N', 'N', 'N', 'N', 'N']:
+                    transportes.append('Nenhum transporte utilizado')
+                print(f'{str(transportes):<76}', end='|\n')
+                print('-'*200)
 
             # Exibição da classificação dos registros
             comando = 'SELECT * FROM pi_classificacoes_sustentabilidade'
@@ -619,6 +641,6 @@ cursor.close()
 connection.close()
 
 print('\nEncerrando programa...\n')
-print('-'*162)
-print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< ATÉ A PRÓXIMA! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^162}\033[0m')
-print('-'*162)
+print('-'*200)
+print(f'\033[1m{">=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=< ATÉ A PRÓXIMA! >=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<>=<":^200}\033[0m')
+print('-'*200)
