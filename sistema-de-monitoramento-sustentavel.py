@@ -296,7 +296,7 @@ while True:
             # Meios de transporte
             if dados_entrada[5][0] == 'S' or dados_entrada[5][1] == 'S' or dados_entrada[5][2] == 'S' or dados_entrada[5][4] == 'S':
                 if dados_entrada[5][3]=='S' or dados_entrada[5][5]=='S':
-                    class_entradas[3] = 'Moderda Sustentabilidade'
+                    class_entradas[3] = 'Moderada Sustentabilidade'
                 else:
                     class_entradas[3] = 'Alta Sustentabilidade'
             else:
@@ -316,7 +316,7 @@ while True:
             class_entradas[3] = criptografia(chave, class_entradas[3])
 
             # Inserindo as classificações criptografadas na tabela
-            comando = f'INSERT INTO pi_classificacoes_sustentabilidade(id, classificacao_agua, classificacao_energia, classificacao_pct_lixo, classificacao_transporte) VALUES ({ultimo_id[0]}, "{class_entradas[0]}", "{class_entradas[1]}", "{class_entradas[2]}", "{class_entradas[2]}")'            
+            comando = f'INSERT INTO pi_classificacoes_sustentabilidade(id, classificacao_agua, classificacao_energia, classificacao_pct_lixo, classificacao_transporte) VALUES ({ultimo_id[0]}, "{class_entradas[0]}", "{class_entradas[1]}", "{class_entradas[2]}", "{class_entradas[3]}")'            
             cursor.execute(comando)
             connection.commit() # Editar banco de dados
 
