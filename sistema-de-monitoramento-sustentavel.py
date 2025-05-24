@@ -174,10 +174,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '',
-    user='',
-    password='',
-    database=''
+    host = '127.0.0.1',
+    user='root',
+    password='EnzoPazian140207',
+    database='teste_py'
 )
 
 cursor = connection.cursor()
@@ -421,7 +421,11 @@ while True:
                                     print('\n\033[1;31mOpção inválida! Tente novamente.\033[m\n')
                         
                         print('>> Os campos de transporte só aceitam valores "S" e "N"')
-                        valor = input('Informe o novo valor para o campo: ').upper() # Informando o novo valor
+                        while True:
+                            valor = input('Informe o novo valor para o campo: ').upper() # Informando o novo valor
+                            if valor == 'S' or valor == 'N':
+                                print('>>Tipo de dado inválido. O campo só aceita os valores "S" e "N".')
+                                break
                         break
                     case _:
                         print('\n\033[1;31mOpção inválida! Tente novamente.\033[m\n')
@@ -452,7 +456,7 @@ while True:
 
             nova_class[1] = criptografia(chave, nova_class[1])
 
-            if coluna != 'data_registro':
+            if coluna != 'data_registro' and coluna != 'qtde_lixo':
                 cursor.execute(f'UPDATE pi_classificacoes_sustentabilidade SET {nova_class[0]} = "{nova_class[1]}" WHERE id = {id}') # Atualizando a classificação com base no novo valor
                 connection.commit()
 
