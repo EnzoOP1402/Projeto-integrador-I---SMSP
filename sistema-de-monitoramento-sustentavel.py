@@ -174,10 +174,10 @@ import mysql.connector
 
 # Criando a conexão -> adicionar as infromações do seu banco de dados
 connection = mysql.connector.connect(
-    host = '127.0.0.1',
-    user='root',
-    password='EnzoPazian140207',
-    database='teste_py'
+    host = '',
+    user='',
+    password='',
+    database=''
 )
 
 cursor = connection.cursor()
@@ -337,7 +337,7 @@ while True:
                     break
             nova_class = ['','']
             while True:
-                coluna = int(input('\n\033[1mSelecione o campo que você deseja alterar:\033[m\n[1] - Data de registro\n[2] - Consumo de água: \n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
+                coluna = int(input('\n\033[1mSelecione o campo que você deseja alterar:\033[m\n[1] - Data de registro\n[2] - Consumo de água\n[3] - Consumo de energia\n[4] - Quantidade de lixo gerada\n[5] - Porcentagem de lixo reciclável gerado\n[6] - Dados de transporte\n\n>> ')) # Definindo o dado a ser alterado
                 match coluna:
                     case 1:
                         valor = input('Informe seguindo o parâmetro (AAAA-MM-DD) o novo valor para o campo: ').upper() # Informando o novo valor
@@ -423,8 +423,9 @@ while True:
                         print('>> Os campos de transporte só aceitam valores "S" e "N"')
                         while True:
                             valor = input('Informe o novo valor para o campo: ').upper() # Informando o novo valor
-                            if valor == 'S' or valor == 'N':
+                            if valor != 'S' and valor != 'N':
                                 print('>>Tipo de dado inválido. O campo só aceita os valores "S" e "N".')
+                            else:
                                 break
                         break
                     case _:
