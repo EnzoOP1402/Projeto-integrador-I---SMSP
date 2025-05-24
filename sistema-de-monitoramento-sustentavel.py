@@ -452,8 +452,9 @@ while True:
 
             nova_class[1] = criptografia(chave, nova_class[1])
 
-            cursor.execute(f'UPDATE pi_classificacoes_sustentabilidade SET {nova_class[0]} = "{nova_class[1]}" WHERE id = {id}') # Atualizando a classificação com base no novo valor
-            connection.commit()
+            if coluna != 'data_registro':
+                cursor.execute(f'UPDATE pi_classificacoes_sustentabilidade SET {nova_class[0]} = "{nova_class[1]}" WHERE id = {id}') # Atualizando a classificação com base no novo valor
+                connection.commit()
 
             print('\nCampo alterado com sucesso!!\nTe redirecionando para o menu principal...\n')
             print('-='*100)
