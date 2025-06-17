@@ -12,21 +12,26 @@ chave = [[4,3],[1,2]]
 # Declarando a função de criptografia
 def criptografia(chave, nome):
 
+    # Removendo espaços e padronizando o texto com letras maiúsculas
     nome = nome.upper().replace(' ', '')
 
     # Vetor de indexação
     I = []
 
-    # Indexando
+    # Indexando -> convertendo as letras do texto em números de acordo com as posições do vetor T (alfabeto)
     for i in range (len(nome)):
+        # Obtém a posição do vetor T que corresponde à letra da posição atual do for
         pos = T.index(nome[i])
         if pos == '25':
+            # Atribui 0 caso a letra seja Z
             I.append(0)
         else:
+            # Atribui o valor da posição + 1 -> o vetor se inicia com 0 e a cifra de Hill com 1
             I.append(pos+1)   
 
     # Caso a palavra tenha um tamanho ímpar, repete a última letra 
     if len(nome)%2 != 0:
+        # Obtém a última letra
         pos = T.index(nome[-1])
         if pos == '25':
             I.append(0)
@@ -36,17 +41,19 @@ def criptografia(chave, nome):
     # Declarando a matriz de texto comum
     P = [[],[]]
 
-    # Indexan
+    # Convertendo o vetor de indexação em uma matriz 2xn
     for i in range(len(I)):
         if i%2 == 0:
+            # Atribui as letras de posição par na linha superior
             P[0].append(I[i])
         else:
+            # Atribui as letras de posição ímpar na linha inferior
             P[1].append(I[i])
 
-    # Obtendo a matriz de texto cifrado
+    # Obtendo a matriz de texto cifrado pela multiplicação da chave pela matriz de texto comum
     C = matmul(chave, P)
 
-    # Convertendo os valores para os números existentes no conjunto alfabeto
+    # Convertendo os valores da multiplicação para os números existentes no conjunto alfabeto
     for i in range(len(C)):
         for j in range(len(C[0])):
             C[i][j] %= 26
@@ -56,9 +63,10 @@ def criptografia(chave, nome):
     # Declarando o vetor que armazena as letras convertidas
     TC = []
 
-    # Convertendo os números em letras
+    # Convertendo os números em letras (as posições sairão distorcidas, mas ajustadas na adequação para a matriz de criptografia)
     for i in range(len(C)):
         for j in range(len(C[0])):
+            # Obtém a letra a partir do número convertido anteriormete -1, que representa o índice de uma letra no vetor alfabeto
             TC.append(T[C[i][j]-1])
 
     # Declarando a matriz a ser usada na exibição
@@ -66,7 +74,9 @@ def criptografia(chave, nome):
 
     # Ajustando as posições das letras na matriz
     for i in range(int(len(TC)/2)):
+        # Atribuindo à primeira linha a primeira metade do texto. Ex: macaco -> linha 0: mac, linha 1: aco
         cripto[0].append(TC[i])
+        # Atribuindo à segunda linha a segunda metade do texto
         cripto[1].append(TC[int(len(TC)/2)+i])
 
     # Transpondo a matriz para facilitar a exibição
@@ -88,7 +98,7 @@ def descriptografia(chave, nome_cifrado):
 
     # Obtendo o determinante
     det = chave[0][0]*chave[1][1] - chave[0][1] * chave[1][0]
-    # Obtendo o equivalente do determinante no conjunto Z6
+    # Obtendo o equivalente do determinante no conjunto Z26
     det %= 26
     # Encontrando o determinante na tabela dos inversos
     indice_inverso = TABELA[0].index(det)
@@ -97,16 +107,21 @@ def descriptografia(chave, nome_cifrado):
     # Montando a matriz inversa
     matriz_inversa = [[chave[1][1]*inverso, chave[0][1]*(-1)*inverso],[chave[1][0]*(-1)*inverso, chave[0][0]*inverso]]
 
+    # Removendo espaços e padronizando o texto com letras maiúsculas
     nome_cifrado = nome_cifrado.upper().replace(' ', '')
 
     # Vetor de indexação de decifragem
     V = []
-    # Indexando
+
+    # Indexando -> convertendo as letras do texto em números de acordo com as posições do vetor T (alfabeto)
     for i in range (len(nome_cifrado)):
+        # Obtém a posição do vetor T que corresponde à letra da posição atual do for
         pos = T.index(nome_cifrado[i])
         if pos == '25':
+            # Atribui 0 caso a letra seja Z
             V.append(0)
         else:
+            # Atribui o valor da posição + 1 -> o vetor se inicia com 0 e a cifra de Hill com 1
             V.append(pos+1)
 
     # Declarando a matriz de texto comum
@@ -115,11 +130,13 @@ def descriptografia(chave, nome_cifrado):
     # Indexando
     for i in range(len(V)):
         if i%2 == 0:
+            # Atribui as letras de posição par na linha superior
             P[0].append(V[i])
         else:
+            # Atribui as letras de posição ímpar na linha inferior
             P[1].append(V[i])
 
-    # Declarando a matriz de texto comum
+    # Declarando a matriz de texto comum a partir da multiplicação da matriz inversa pela de texto comum
     M = matmul(matriz_inversa,P)
 
     # Convertendo os valores para os números existentes no conjunto alfabeto
@@ -132,9 +149,10 @@ def descriptografia(chave, nome_cifrado):
     # Declarando o vetor que armazena as letras convertidas
     TD = []
 
-    # Convertendo os números em letras
+    # Convertendo os números em letras (as posições sairão distorcidas, mas ajustadas na adequação para a matriz de criptografia)
     for i in range(len(M)):
         for j in range(len(M[0])):
+            # Obtém a letra a partir do número convertido anteriormete -1, que representa o índice de uma letra no vetor alfabeto
             TD.append(T[M[i][j]-1])
 
     # Declarando a matriz a ser usada na exibição
@@ -142,7 +160,9 @@ def descriptografia(chave, nome_cifrado):
 
     # Ajustando as posições das letras na matriz
     for i in range(int(len(TD)/2)):
+        # Atribuindo à primeira linha a primeira metade do texto. Ex: macaco -> linha 0: mac, linha 1: aco
         descripto[0].append(TD[i])
+        # Atribuindo à segunda linha a segunda metade do texto
         descripto[1].append(TD[int(len(TD)/2)+i])
 
     # Transpondo a matriz para facilitar a exibição
